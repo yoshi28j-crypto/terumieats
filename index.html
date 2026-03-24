@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terumi Eats – Cooking Classes, Tours & Interpretation in Japan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Zen+Kaku+Gothic+New:wght@300;400;500&family=Noto+Serif+JP:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #f5f0e8; --warm-white: #faf7f2; --ink: #1a1208;
+      --miso: #c4913a; --miso-light: #e8c87a;
+      --matcha: #5a7a5e; --matcha-dark: #3d5440;
+      --sake: #e8ddd0; --text-body: #2d2416; --text-muted: #7a6a55;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { background:var(--warm-white); color:var(--text-body); font-family:'Zen Kaku Gothic New',sans-serif; font-weight:300; overflow-x:hidden; }
+
+    /* ── i18n ── */
+    [data-lang]       { display:none; }
+    [data-lang-block] { display:none; }
+    body.lang-en [data-lang="en"]       { display:inline; }
+    body.lang-ja [data-lang="ja"]       { display:inline; }
+    body.lang-en [data-lang-block="en"] { display:block; }
+    body.lang-ja [data-lang-block="ja"] { display:block; }
+
+    /* ── LANG TOGGLE ── */
+    .lang-toggle { display:flex; align-items:center; border:1.5px solid var(--miso); border-radius:100px; overflow:hidden; flex-shrink:0; }
+    .lang-btn { background:none; border:none; cursor:pointer; padding:6px 16px; font-family:'Zen Kaku Gothic New',sans-serif; font-size:0.72rem; font-weight:500; letter-spacing:0.1em; color:var(--text-muted); transition:all 0.25s; }
+    .lang-btn.active { background:var(--miso); color:white; }
+    .lang-btn:hover:not(.active) { color:var(--miso); }
+
+    /* ── NAV ── */
+    nav { position:fixed; top:0; left:0; right:0; z-index:200; display:flex; justify-content:space-between; align-items:center; padding:20px 48px; transition:background 0.4s,padding 0.4s; }
+    nav.scrolled { background:rgba(250,247,242,0.97); backdrop-filter:blur(14px); padding:14px 48px; box-shadow:0 1px 0 rgba(0,0,0,0.08); }
+    .nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:500; color:var(--ink); letter-spacing:0.04em; text-decoration:none; flex-shrink:0; }
+    .nav-logo span { color:var(--miso); }
+    .nav-center { display:flex; align-items:center; gap:28px; list-style:none; }
+    .nav-center a { text-decoration:none; color:var(--text-body); font-size:0.76rem; letter-spacing:0.08em; position:relative; padding-bottom:2px; white-space:nowrap; }
+    .nav-center a::after { content:''; position:absolute; bottom:0; left:0; width:0; height:1px; background:var(--miso); transition:width 0.3s; }
+    .nav-center a:hover::after { width:100%; }
+    .nav-right { display:flex; align-items:center; gap:14px; }
+    .nav-cta { background:var(--miso); color:white; padding:9px 20px; border-radius:2px; font-size:0.74rem; letter-spacing:0.1em; text-decoration:none; transition:background 0.25s; white-space:nowrap; }
+    .nav-cta:hover { background:var(--matcha-dark); }
+
+    /* ── HERO ── */
+    #hero { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; overflow:hidden; }
+    .hero-left { background:var(--cream); display:flex; flex-direction:column; justify-content:center; padding:120px 64px 80px; }
+    .hero-eyebrow { font-size:0.75rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--miso); margin-bottom:28px; opacity:0; animation:fadeUp 0.8s 0.3s forwards; }
+    .hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,5vw,5rem); font-weight:400; line-height:1.05; color:var(--ink); margin-bottom:10px; opacity:0; animation:fadeUp 0.9s 0.5s forwards; }
+    .hero-title em { font-style:italic; color:var(--miso); }
+    .hero-title-ja { font-family:'Noto Serif JP',serif; font-size:clamp(2.4rem,4vw,4rem); font-weight:300; line-height:1.35; }
+    .hero-subtitle { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-style:italic; color:var(--text-muted); margin-bottom:36px; opacity:0; animation:fadeUp 0.9s 0.65s forwards; }
+    .hero-desc { font-size:0.93rem; line-height:1.9; color:var(--text-muted); max-width:400px; margin-bottom:44px; opacity:0; animation:fadeUp 0.9s 0.8s forwards; }
+    .hero-btns { display:flex; gap:14px; flex-wrap:wrap; opacity:0; animation:fadeUp 0.9s 0.95s forwards; }
+    .btn-primary { background:var(--miso); color:white; padding:15px 32px; text-decoration:none; font-size:0.8rem; letter-spacing:0.12em; border-radius:2px; transition:all 0.3s; display:inline-block; }
+    .btn-primary:hover { background:var(--matcha-dark); transform:translateY(-2px); }
+    .btn-outline { border:1px solid var(--ink); color:var(--ink); padding:14px 32px; text-decoration:none; font-size:0.8rem; letter-spacing:0.12em; border-radius:2px; transition:all 0.3s; display:inline-block; }
+    .btn-outline:hover { background:var(--ink); color:white; transform:translateY(-2px); }
+    .hero-right { position:relative; overflow:hidden; }
+    .hero-image-stack { position:absolute; inset:0; display:grid; grid-template-rows:1fr 1fr; }
+    .hero-img-top { background:url('https://images.unsplash.com/photo-1547592180-85f173990554?w=900&q=80') center/cover no-repeat; filter:saturate(0.9); }
+    .hero-img-bottom { background:url('https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=900&q=80') center/cover no-repeat; filter:saturate(0.9); }
+    .hero-label { position:absolute; bottom:32px; left:-24px; background:var(--matcha); color:white; padding:12px 28px 12px 48px; font-size:0.75rem; letter-spacing:0.16em; opacity:0; animation:slideIn 0.8s 1.2s forwards; }
+    .hero-ornament { position:absolute; top:50%; left:-1px; transform:translateY(-50%); width:2px; height:80px; background:var(--miso); }
+    .instagram-badge { position:absolute; top:40px; right:40px; background:rgba(250,247,242,0.92); backdrop-filter:blur(8px); padding:14px 20px; border-radius:4px; text-align:center; z-index:3; opacity:0; animation:fadeUp 0.8s 1.4s forwards; }
+    .instagram-badge a { text-decoration:none; color:var(--ink); font-size:0.72rem; letter-spacing:0.1em; }
+    .ig-handle { display:block; font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--miso); margin-top:2px; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes slideIn { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+
+    /* ── SECTIONS ── */
+    section { padding:100px 0; }
+    .container { max-width:1200px; margin:0 auto; padding:0 48px; }
+    .section-label { font-size:0.72rem; letter-spacing:0.26em; text-transform:uppercase; color:var(--miso); margin-bottom:16px; }
+    .section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2.4rem,4vw,3.4rem); font-weight:400; line-height:1.1; color:var(--ink); margin-bottom:20px; }
+    .section-title em { font-style:italic; color:var(--miso); }
+    .section-title-ja { font-family:'Noto Serif JP',serif; font-size:clamp(2rem,3.5vw,2.8rem); font-weight:300; line-height:1.35; }
+    .section-lead { font-size:0.95rem; line-height:1.9; color:var(--text-muted); max-width:600px; margin-bottom:60px; }
+
+    /* ── ABOUT ── */
+    #about { background:var(--ink); color:var(--cream); padding:100px 0; }
+    #about .container { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    #about .section-label { color:var(--miso-light); }
+    #about .section-title { color:var(--cream); }
+    #about p { color:rgba(245,240,232,0.72); line-height:1.95; margin-bottom:20px; font-size:0.95rem; }
+    .about-image-wrap { position:relative; }
+    .about-img { width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:2px; filter:saturate(0.85); }
+    .about-accent { position:absolute; bottom:-24px; right:-24px; width:140px; height:140px; border:2px solid var(--miso); border-radius:2px; z-index:-1; }
+    .about-kanji { font-family:'Noto Serif JP',serif; font-size:5rem; font-weight:300; color:rgba(196,145,58,0.15); position:absolute; top:-20px; left:-20px; line-height:1; pointer-events:none; }
+    .about-stats { display:flex; gap:40px; margin-top:40px; padding-top:40px; border-top:1px solid rgba(245,240,232,0.12); }
+    .stat-num { font-family:'Cormorant Garamond',serif; font-size:2.8rem; font-weight:300; color:var(--miso-light); line-height:1; }
+    .stat-label { font-size:0.72rem; letter-spacing:0.1em; color:rgba(245,240,232,0.45); text-transform:uppercase; margin-top:4px; }
+
+    /* ── COOKING ── */
+    #cooking { background:var(--warm-white); }
+    .class-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-bottom:60px; }
+    .class-card { position:relative; overflow:hidden; aspect-ratio:3/4; cursor:pointer; }
+    .class-card img { width:100%; height:100%; object-fit:cover; transition:transform 0.6s; filter:saturate(0.88); }
+    .class-card:hover img { transform:scale(1.06); }
+    .class-card-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(26,18,8,0.88) 0%,transparent 55%); display:flex; flex-direction:column; justify-content:flex-end; padding:28px; }
+    .class-tag { font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--miso-light); margin-bottom:8px; }
+    .class-name { font-family:'Cormorant Garamond',serif; font-size:1.4rem; color:white; line-height:1.2; margin-bottom:6px; }
+    .class-desc { font-size:0.78rem; color:rgba(255,255,255,0.65); line-height:1.6; transform:translateY(8px); opacity:0; transition:all 0.35s; }
+    .class-card:hover .class-desc { transform:translateY(0); opacity:1; }
+    .class-card.featured { grid-column:span 2; aspect-ratio:16/9; }
+    .class-info-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--sake); border:1px solid var(--sake); margin-bottom:48px; }
+    .class-info-item { background:var(--warm-white); padding:28px 32px; text-align:center; }
+    .info-icon { font-size:1.5rem; margin-bottom:10px; }
+    .info-title { font-size:0.68rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+    .info-value { font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--ink); }
+    .menu-showcase { display:grid; grid-template-columns:1fr 2fr; gap:60px; align-items:start; margin-top:60px; }
+    .menu-list { list-style:none; }
+    .menu-list li { padding:18px 0; border-bottom:1px solid var(--sake); display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:padding-left 0.3s; }
+    .menu-list li:hover { padding-left:8px; }
+    .menu-list li:hover .menu-dot { background:var(--miso); }
+    .menu-item-name { font-family:'Cormorant Garamond',serif; font-size:1.1rem; color:var(--ink); }
+    .menu-item-sub { font-size:0.78rem; color:var(--text-muted); display:block; margin-top:2px; }
+    .menu-dot { width:6px; height:6px; border-radius:50%; background:var(--sake); flex-shrink:0; transition:background 0.3s; }
+    .menu-feature-img { position:relative; }
+    .menu-feature-img img { width:100%; aspect-ratio:4/5; object-fit:cover; filter:saturate(0.9); }
+    .menu-img-label { position:absolute; bottom:0; right:0; background:var(--miso); color:white; padding:12px 20px; font-size:0.75rem; letter-spacing:0.14em; }
+
+    /* ── TOURS ── */
+    #tours { background:var(--matcha-dark); color:var(--cream); }
+    #tours .section-label { color:rgba(232,200,122,0.8); }
+    #tours .section-title { color:var(--cream); }
+    #tours .section-lead { color:rgba(245,240,232,0.65); }
+    .tour-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:2px; margin-bottom:60px; }
+    .tour-card { position:relative; overflow:hidden; aspect-ratio:16/10; }
+    .tour-card img { width:100%; height:100%; object-fit:cover; filter:saturate(0.7) brightness(0.85); transition:all 0.6s; }
+    .tour-card:hover img { filter:saturate(0.95) brightness(0.95); transform:scale(1.04); }
+    .tour-overlay { position:absolute; inset:0; background:linear-gradient(135deg,rgba(61,84,64,0.7),transparent); display:flex; flex-direction:column; justify-content:flex-end; padding:36px; }
+    .tour-num { font-family:'Cormorant Garamond',serif; font-size:3.5rem; font-weight:300; color:rgba(232,200,122,0.22); position:absolute; top:20px; right:24px; line-height:1; }
+    .tour-title { font-family:'Cormorant Garamond',serif; font-size:1.7rem; color:white; margin-bottom:8px; }
+    .tour-body { font-size:0.82rem; color:rgba(255,255,255,0.62); line-height:1.65; }
+    .service-row { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; padding-top:60px; border-top:1px solid rgba(245,240,232,0.12); }
+    .service-item { padding:36px; border:1px solid rgba(245,240,232,0.1); border-radius:2px; transition:all 0.35s; }
+    .service-item:hover { background:rgba(245,240,232,0.05); border-color:var(--miso-light); }
+    .service-icon { font-size:2rem; margin-bottom:20px; }
+    .service-title { font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:var(--cream); margin-bottom:12px; }
+    .service-body { font-size:0.84rem; color:rgba(245,240,232,0.52); line-height:1.8; }
+    .languages-badge { display:inline-flex; gap:8px; margin-top:16px; flex-wrap:wrap; }
+    .lang-pill { padding:4px 14px; border:1px solid rgba(232,200,122,0.4); border-radius:100px; font-size:0.72rem; letter-spacing:0.1em; color:var(--miso-light); }
+
+    /* ── ENGLISH × COOKING ── */
+    #english { background:linear-gradient(160deg,#1a1208 0%,#2d1f0a 50%,#1a2410 100%); color:var(--cream); padding:100px 0; }
+    #english .section-label { color:var(--miso-light); }
+    #english .section-title { color:var(--cream); }
+    #english .section-lead { color:rgba(245,240,232,0.65); max-width:720px; }
+    .eng-theme-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:80px; }
+    .eng-theme-card { background:rgba(245,240,232,0.05); border:1px solid rgba(245,240,232,0.08); border-radius:4px; overflow:hidden; transition:all 0.4s; }
+    .eng-theme-card:hover { background:rgba(245,240,232,0.09); border-color:rgba(196,145,58,0.4); transform:translateY(-4px); }
+    .eng-theme-img { position:relative; aspect-ratio:4/3; overflow:hidden; }
+    .eng-theme-img img { width:100%; height:100%; object-fit:cover; transition:transform 0.5s; filter:brightness(0.9) saturate(0.9); }
+    .eng-theme-card:hover .eng-theme-img img { transform:scale(1.06); filter:brightness(1) saturate(1.05); }
+    .eng-theme-badge { position:absolute; top:12px; left:12px; background:rgba(26,18,8,0.75); backdrop-filter:blur(6px); color:var(--miso-light); font-size:0.7rem; letter-spacing:0.1em; padding:5px 12px; border-radius:100px; border:1px solid rgba(196,145,58,0.3); }
+    .eng-theme-body { padding:20px; }
+    .eng-theme-title { font-family:'Cormorant Garamond',serif; font-size:1.12rem; color:var(--cream); margin-bottom:10px; line-height:1.25; }
+    .eng-theme-desc { font-size:0.78rem; color:rgba(245,240,232,0.55); line-height:1.72; margin-bottom:14px; }
+    .eng-theme-vocab { display:flex; flex-wrap:wrap; gap:6px; }
+    .vocab-chip { background:rgba(196,145,58,0.12); border:1px solid rgba(196,145,58,0.25); color:var(--miso-light); font-size:0.68rem; padding:3px 10px; border-radius:100px; }
+    .eng-how { margin-bottom:60px; }
+    .eng-steps { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+    .eng-step { background:rgba(245,240,232,0.04); border:1px solid rgba(245,240,232,0.07); padding:40px 32px; text-align:center; transition:all 0.3s; }
+    .eng-step:hover { background:rgba(245,240,232,0.08); }
+    .step-num { font-family:'Cormorant Garamond',serif; font-size:3rem; font-weight:300; color:rgba(196,145,58,0.2); line-height:1; margin-bottom:12px; }
+    .step-icon { font-size:1.8rem; margin-bottom:16px; }
+    .step-title { font-family:'Cormorant Garamond',serif; font-size:1.25rem; color:var(--cream); margin-bottom:12px; }
+    .step-body { font-size:0.82rem; color:rgba(245,240,232,0.5); line-height:1.78; }
+    .eng-details { display:grid; grid-template-columns:repeat(5,1fr); gap:2px; background:rgba(245,240,232,0.05); border:1px solid rgba(245,240,232,0.08); }
+    .eng-detail-item { background:rgba(26,18,8,0.4); padding:28px 20px; text-align:center; }
+    .eng-detail-item .info-icon { font-size:1.4rem; margin-bottom:10px; }
+    .eng-detail-item .info-title { font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:rgba(245,240,232,0.4); margin-bottom:6px; }
+    .eng-detail-item .info-value { color:var(--cream); font-weight:400; font-size:0.9rem; }
+
+    /* ── TESTIMONIALS ── */
+    #experience { background:var(--cream); }
+    .experience-layout { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    .quote-block { border-left:3px solid var(--miso); padding-left:32px; margin-bottom:40px; }
+    blockquote { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-style:italic; font-weight:300; line-height:1.52; color:var(--ink); margin-bottom:16px; }
+    .quote-attr { font-size:0.77rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-muted); }
+    .testimonial-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .testimonial-card { background:var(--warm-white); padding:24px; border-radius:2px; }
+    .stars { color:var(--miso); font-size:0.9rem; margin-bottom:10px; }
+    .testimonial-card p { font-size:0.84rem; line-height:1.72; color:var(--text-muted); }
+    .testimonial-name { font-size:0.73rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-body); margin-top:14px; }
+
+    /* ── GALLERY ── */
+    #gallery { background:var(--warm-white); padding:80px 0; }
+    .ig-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:3px; }
+    .ig-item { aspect-ratio:1; overflow:hidden; position:relative; cursor:pointer; }
+    .ig-item img { width:100%; height:100%; object-fit:cover; filter:saturate(0.85); transition:all 0.4s; }
+    .ig-item:hover img { filter:saturate(1.1); transform:scale(1.06); }
+    .ig-item-overlay { position:absolute; inset:0; background:rgba(26,18,8,0.45); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.35s; }
+    .ig-item:hover .ig-item-overlay { opacity:1; }
+    .ig-item-overlay span { color:white; font-size:1.5rem; }
+
+    /* ── CONTACT ── */
+    #contact { background:var(--ink); color:var(--cream); }
+    #contact .section-title { color:var(--cream); }
+    #contact .section-label { color:var(--miso-light); }
+    .contact-layout { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+    .contact-info p { color:rgba(245,240,232,0.65); line-height:1.9; font-size:0.95rem; margin-bottom:32px; }
+    .contact-item { display:flex; gap:16px; align-items:flex-start; margin-bottom:24px; }
+    .contact-icon { font-size:1.2rem; flex-shrink:0; margin-top:2px; }
+    .contact-detail { font-size:0.87rem; color:rgba(245,240,232,0.58); line-height:1.6; }
+    .contact-detail strong { display:block; color:var(--cream); font-weight:400; margin-bottom:2px; letter-spacing:0.06em; }
+    .contact-form { display:flex; flex-direction:column; gap:16px; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .form-group { display:flex; flex-direction:column; }
+    .form-group label { font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(245,240,232,0.42); margin-bottom:8px; }
+    .form-group input,.form-group select,.form-group textarea { background:rgba(245,240,232,0.06); border:1px solid rgba(245,240,232,0.12); color:var(--cream); padding:14px 16px; font-family:'Zen Kaku Gothic New',sans-serif; font-size:0.9rem; outline:none; border-radius:2px; transition:border-color 0.25s; }
+    .form-group select option { background:var(--ink); }
+    .form-group input::placeholder,.form-group textarea::placeholder { color:rgba(245,240,232,0.28); }
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus { border-color:var(--miso); }
+    .form-group textarea { resize:vertical; min-height:120px; }
+    .btn-form { background:var(--miso); color:white; padding:16px 40px; border:none; font-family:'Zen Kaku Gothic New',sans-serif; font-size:0.82rem; letter-spacing:0.14em; text-transform:uppercase; cursor:pointer; border-radius:2px; transition:all 0.3s; align-self:flex-start; }
+    .btn-form:hover { background:var(--matcha-dark); transform:translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer { background:#0e0c08; padding:60px 0 32px; color:rgba(245,240,232,0.38); }
+    .footer-inner { max-width:1200px; margin:0 auto; padding:0 48px; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:48px; padding-bottom:48px; border-bottom:1px solid rgba(245,240,232,0.08); margin-bottom:28px; }
+    .footer-tagline { font-size:0.82rem; line-height:1.75; margin-top:12px; color:rgba(245,240,232,0.33); }
+    .footer-col h4 { font-size:0.68rem; letter-spacing:0.22em; text-transform:uppercase; color:rgba(245,240,232,0.48); margin-bottom:18px; }
+    .footer-col ul { list-style:none; }
+    .footer-col ul li { margin-bottom:10px; }
+    .footer-col ul a { text-decoration:none; color:rgba(245,240,232,0.33); font-size:0.84rem; transition:color 0.25s; }
+    .footer-col ul a:hover { color:var(--miso-light); }
+    .footer-bottom { max-width:1200px; margin:0 auto; padding:0 48px; display:flex; justify-content:space-between; align-items:center; }
+    .footer-bottom p { font-size:0.77rem; }
+    .social-links { display:flex; gap:20px; }
+    .social-links a { color:rgba(245,240,232,0.33); text-decoration:none; font-size:0.77rem; letter-spacing:0.1em; transition:color 0.25s; }
+    .social-links a:hover { color:var(--miso-light); }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity:0; transform:translateY(32px); transition:opacity 0.75s,transform 0.75s; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    /* ── MOBILE ── */
+    @media (max-width:960px) {
+      nav { padding:14px 24px; }
+      .nav-center { display:none; }
+      #hero { grid-template-columns:1fr; }
+      .hero-left { padding:100px 28px 60px; }
+      .hero-right { height:50vh; }
+      #about .container,.experience-layout,.contact-layout { grid-template-columns:1fr; gap:48px; }
+      .class-grid { grid-template-columns:1fr 1fr; }
+      .class-card.featured { grid-column:span 2; }
+      .tour-grid { grid-template-columns:1fr; }
+      .service-row { grid-template-columns:1fr; }
+      .class-info-row { grid-template-columns:repeat(2,1fr); }
+      .testimonial-grid { grid-template-columns:1fr; }
+      .ig-grid { grid-template-columns:repeat(3,1fr); }
+      .footer-inner { grid-template-columns:1fr 1fr; }
+      .container { padding:0 24px; }
+      .eng-theme-grid { grid-template-columns:repeat(2,1fr); }
+      .eng-steps { grid-template-columns:1fr; }
+      .eng-details { grid-template-columns:repeat(2,1fr); }
+      .menu-showcase { grid-template-columns:1fr; }
+    }
+    @media (max-width:540px) {
+      .eng-theme-grid { grid-template-columns:1fr; }
+      .class-grid { grid-template-columns:1fr; }
+      .class-card.featured { grid-column:span 1; aspect-ratio:3/4; }
+    }
+  </style>
+</head>
+<body class="lang-en">
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Terumi<span>Eats</span></a>
+  <ul class="nav-center">
+    <li><a href="#about"><span data-lang="en">About</span><span data-lang="ja">私について</span></a></li>
+    <li><a href="#cooking"><span data-lang="en">Cooking Classes</span><span data-lang="ja">料理教室</span></a></li>
+    <li><a href="#english"><span data-lang="en">English × Cooking</span><span data-lang="ja">英会話×料理</span></a></li>
+    <li><a href="#tours"><span data-lang="en">Tours & Guide</span><span data-lang="ja">ツアー・通訳</span></a></li>
+    <li><a href="#gallery"><span data-lang="en">Gallery</span><span data-lang="ja">ギャラリー</span></a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btnEN" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btnJA" onclick="setLang('ja')">日本語</button>
+    </div>
+    <a href="#contact" class="nav-cta">
+      <span data-lang="en">Book Now</span><span data-lang="ja">予約する</span>
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">🌸 Osaka, Japan</p>
+    <h1 class="hero-title" data-lang-block="en">Taste the<br><em>Soul</em> of<br>Japan</h1>
+    <h1 class="hero-title hero-title-ja" data-lang-block="ja">日本の<em>味</em>と<br>文化を体験</h1>
+    <p class="hero-subtitle">with Terumi</p>
+    <p class="hero-desc" data-lang-block="en">Discover authentic Japanese cuisine through hands-on cooking classes, intimate food tours, and guided experiences in the heart of Osaka — led by a passionate local cook, guide, and interpreter.</p>
+    <p class="hero-desc" data-lang-block="ja">大阪在住の食品起業家・ガイド・通訳者のテルミと一緒に、本物の日本料理や文化を体験しませんか。手作り料理教室からフードツアーまで、心のこもったひとときをご提供します。</p>
+    <div class="hero-btns">
+      <a href="#cooking" class="btn-primary"><span data-lang="en">Explore Classes</span><span data-lang="ja">料理教室を見る</span></a>
+      <a href="#tours" class="btn-outline"><span data-lang="en">Tours & Guiding</span><span data-lang="ja">ツアー・通訳</span></a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-image-stack">
+      <div class="hero-img-top"></div>
+      <div class="hero-img-bottom"></div>
+    </div>
+    <div class="hero-ornament"></div>
+    <div class="hero-label"><span data-lang="en">Japanese Home Cooking</span><span data-lang="ja">日本の家庭料理</span></div>
+    <div class="instagram-badge">
+      <a href="https://www.instagram.com/terumieats/" target="_blank">
+        <span data-lang="en">Follow along</span><span data-lang="ja">フォローする</span>
+        <span class="ig-handle">@terumieats</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-image-wrap reveal">
+      <div class="about-kanji">食</div>
+      <img class="about-img" src="https://images.unsplash.com/photo-1607301406259-dfb186e15de8?w=700&q=80" alt="Terumi cooking" />
+      <div class="about-accent"></div>
+    </div>
+    <div class="reveal">
+      <p class="section-label"><span data-lang="en">About Terumi</span><span data-lang="ja">私について</span></p>
+      <h2 class="section-title" data-lang-block="en">A Passion for<br>Japanese <em>Food & Culture</em></h2>
+      <h2 class="section-title section-title-ja" data-lang-block="ja">日本の<em>食と文化</em>への情熱</h2>
+      <p data-lang-block="en">Hi, I'm Terumi — a home cook, food lover, and proud Osaka local. I grew up watching my mother transform humble ingredients into extraordinary meals, and that love for Japanese food has only deepened over the years.</p>
+      <p data-lang-block="ja">はじめまして、テルミです。大阪生まれの料理研究家です。母が身近な食材をおいしい料理に変える姿を見て育ち、日本食への愛情はますます深まるばかりです。</p>
+      <p data-lang-block="en">Through my classes and tours, I share the techniques, stories, and seasonal wisdom behind Japanese home cooking — not only the restaurant version, but also the real food that families have made for generations.</p>
+      <p data-lang-block="ja">料理教室やツアーでは、レストランの料理だけではなく、日本の家庭で世代を超えて受け継がれてきた本物の味と技を丁寧にお伝えしています。季節の食材の使い方や、料理に込められた文化の背景もご紹介します。</p>
+      <p data-lang-block="en">As a tour guide and Japanese–English interpreter, I can also help you navigate Japan with ease and insight — from hidden izakayas to historic temples.</p>
+      <p data-lang-block="ja">ツアーガイド・通訳者としても活動しており、隠れた居酒屋から歴史ある寺社仏閣まで、大阪・京都・奈良を日本語と英語でご案内することができます。</p>
+      <div class="about-stats">
+        <div><div class="stat-num">500+</div><div class="stat-label"><span data-lang="en">Students taught</span><span data-lang="ja">受講生数</span></div></div>
+        <div><div class="stat-num">12+</div><div class="stat-label"><span data-lang="en">Years experience</span><span data-lang="ja">年の経験</span></div></div>
+        <div><div class="stat-num">30+</div><div class="stat-label"><span data-lang="en">Countries welcomed</span><span data-lang="ja">来訪国数</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COOKING CLASSES -->
+<section id="cooking">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label"><span data-lang="en">Hands-On Experience</span><span data-lang="ja">体験型レッスン</span></p>
+      <h2 class="section-title" data-lang-block="en">Cooking <em>Classes</em></h2>
+      <h2 class="section-title section-title-ja" data-lang-block="ja">日本料理<em>教室</em></h2>
+      <p class="section-lead" data-lang-block="en">Learn to cook authentic Japanese dishes in a warm, welcoming kitchen. All classes are small-group or private, held in Osaka, and include a full meal together at the end of every session.</p>
+      <p class="section-lead" data-lang-block="ja">アットホームなキッチンで、本格的な日本料理を楽しく学びましょう。少人数制またはプライベートレッスン。大阪開催で、毎回レッスン後にみんなで一緒に食事をします。</p>
+    </div>
+    <div class="class-grid reveal">
+      <div class="class-card featured">
+        <img src="https://images.unsplash.com/photo-1553621042-f6e147245754?w=1200&q=80" alt="Sushi class" />
+        <div class="class-card-overlay">
+          <span class="class-tag"><span data-lang="en">⭐ Most Popular</span><span data-lang="ja">⭐ 人気No.1</span></span>
+          <div class="class-name"><span data-lang="en">Sushi & Sashimi Workshop</span><span data-lang="ja">寿司・刺身ワークショップ</span></div>
+          <div class="class-desc"><span data-lang="en">Learn nigiri, maki, and temaki — including sushi rice and fresh fish handling.</span><span data-lang="ja">握り・巻き・手巻き寿司を基礎から。酢飯の作り方や魚の扱い方まで丁寧にレクチャーします。</span></div>
+        </div>
+      </div>
+      <div class="class-card">
+        <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80" alt="Ramen" />
+        <div class="class-card-overlay">
+          <span class="class-tag"><span data-lang="en">Soul food</span><span data-lang="ja">魂の一杯</span></span>
+          <div class="class-name"><span data-lang="en">Ramen from Scratch</span><span data-lang="ja">ラーメンを一から作る</span></div>
+          <div class="class-desc"><span data-lang="en">Rich broths, handmade noodles, all the toppings.</span><span data-lang="ja">豚骨・醤油スープから自家製麺まで、ラーメンをゼロから作ります。</span></div>
+        </div>
+      </div>
+      <div class="class-card">
+        <img src="https://images.unsplash.com/photo-1574484284002-952d92456975?w=600&q=80" alt="Wagyu" />
+        <div class="class-card-overlay">
+          <span class="class-tag"><span data-lang="en">Premium</span><span data-lang="ja">プレミアム</span></span>
+          <div class="class-name"><span data-lang="en">Wagyu & Japanese BBQ</span><span data-lang="ja">和牛＆日本式BBQ</span></div>
+          <div class="class-desc"><span data-lang="en">Master the art of selecting and cooking Wagyu beef.</span><span data-lang="ja">和牛の選び方から焼き方まで、贅沢な体験をどうぞ。</span></div>
+        </div>
+      </div>
+      <div class="class-card">
+        <img src="https://images.unsplash.com/photo-1498654077810-12c21d4d6dc3?w=600&q=80" alt="Bento" />
+        <div class="class-card-overlay">
+          <span class="class-tag"><span data-lang="en">Family friendly</span><span data-lang="ja">ファミリー向け</span></span>
+          <div class="class-name"><span data-lang="en">Bento Box Art</span><span data-lang="ja">お弁当アート</span></div>
+          <div class="class-desc"><span data-lang="en">Create beautiful, nutritious Japanese lunch boxes.</span><span data-lang="ja">見た目も栄養もバランスのいい和風お弁当を作ります。</span></div>
+        </div>
+      </div>
+      <div class="class-card">
+        <img src="https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=600&q=80" alt="Miso" />
+        <div class="class-card-overlay">
+          <span class="class-tag"><span data-lang="en">Everyday staple</span><span data-lang="ja">毎日の基本</span></span>
+          <div class="class-name"><span data-lang="en">Dashi & Miso Mastery</span><span data-lang="ja">だし・味噌マスター</span></div>
+          <div class="class-desc"><span data-lang="en">The foundations of Japanese cooking.</span><span data-lang="ja">日本料理の基礎となるだしと味噌を徹底的に学びます。</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="class-info-row reveal">
+      <div class="class-info-item">
+        <div class="info-icon">🏠</div>
+        <div class="info-title"><span data-lang="en">Location</span><span data-lang="ja">場所</span></div>
+        <div class="info-value"><span data-lang="en">Osaka Home Kitchen</span><span data-lang="ja">大阪・自宅キッチン</span></div>
+      </div>
+      <div class="class-info-item">
+        <div class="info-icon">👥</div>
+        <div class="info-title"><span data-lang="en">Group Size</span><span data-lang="ja">定員</span></div>
+        <div class="info-value"><span data-lang="en">2–8 guests</span><span data-lang="ja">2〜8名</span></div>
+      </div>
+      <div class="class-info-item">
+        <div class="info-icon">⏱️</div>
+        <div class="info-title"><span data-lang="en">Duration</span><span data-lang="ja">所要時間</span></div>
+        <div class="info-value"><span data-lang="en">3–4 hours</span><span data-lang="ja">3〜4時間</span></div>
+      </div>
+      <div class="class-info-item">
+        <div class="info-icon">🌐</div>
+        <div class="info-title"><span data-lang="en">Language</span><span data-lang="ja">言語</span></div>
+        <div class="info-value"><span data-lang="en">English / Japanese</span><span data-lang="ja">英語・日本語</span></div>
+      </div>
+    </div>
+    <div class="menu-showcase reveal">
+      <div>
+        <p class="section-label"><span data-lang="en">What You'll Learn</span><span data-lang="ja">メニュー例</span></p>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:2rem;margin-bottom:24px;color:var(--ink)">
+          <span data-lang="en">Signature Dishes</span>
+          <span data-lang="ja" style="font-family:'Noto Serif JP',serif;font-weight:300">定番料理</span>
+        </h3>
+        <ul class="menu-list">
+          <li><div><span class="menu-item-name">Okonomiyaki</span><span class="menu-item-sub">お好み焼き · <span data-lang="en">Osaka Soul Pancake</span><span data-lang="ja">大阪のソウルフード</span></span></div><div class="menu-dot"></div></li>
+          <li><div><span class="menu-item-name">Takoyaki</span><span class="menu-item-sub">たこ焼き · <span data-lang="en">Octopus Balls</span><span data-lang="ja">たこ入り丸焼き</span></span></div><div class="menu-dot"></div></li>
+          <li><div><span class="menu-item-name">Onigiri</span><span class="menu-item-sub">おにぎり · <span data-lang="en">Rice Balls</span><span data-lang="ja">手作りおにぎり</span></span></div><div class="menu-dot"></div></li>
+          <li><div><span class="menu-item-name">Tempura</span><span class="menu-item-sub">天ぷら · <span data-lang="en">Light Crispy Fry</span><span data-lang="ja">サクサク揚げ</span></span></div><div class="menu-dot"></div></li>
+          <li><div><span class="menu-item-name">Gyoza</span><span class="menu-item-sub">餃子 · <span data-lang="en">Pan-fried Dumplings</span><span data-lang="ja">焼き餃子</span></span></div><div class="menu-dot"></div></li>
+          <li><div><span class="menu-item-name">Matcha Wagashi</span><span class="menu-item-sub">抹茶和菓子 · <span data-lang="en">Traditional Sweets</span><span data-lang="ja">伝統的な和菓子</span></span></div><div class="menu-dot"></div></li>
+        </ul>
+      </div>
+      <div class="menu-feature-img">
+        <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80" alt="Japanese food" />
+        <div class="menu-img-label"><span data-lang="en">All ingredients included</span><span data-lang="ja">食材はすべて込み</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ENGLISH × COOKING -->
+<section id="english">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label"><span data-lang="en">For Japanese Learners</span><span data-lang="ja">英会話を楽しみたい方へ</span></p>
+      <h2 class="section-title" data-lang-block="en">English Practice<br>Through <em>World Cuisine</em></h2>
+      <h2 class="section-title section-title-ja" data-lang-block="ja">料理で学ぶ<em>英会話</em>教室</h2>
+      <p class="section-lead" data-lang-block="en">A unique class designed for Japanese speakers who want to improve their English in a relaxed, delicious setting. We cook international dishes together — Spanish, Mexican, Easter, Christmas & more — while chatting naturally in English. No textbooks, just real conversation around real food.</p>
+      <p class="section-lead" data-lang-block="ja">テキストなし、試験なし。料理をしながら自然に英語を話す、楽しい英会話教室です。スパニッシュ料理、メキシカン、クリスマス・イースターの特別メニューなど世界の料理を一緒に作りながら、英語でおしゃべりしましょう。日本語サポートあり、初心者大歓迎です！</p>
+    </div>
+    <div class="eng-theme-grid reveal">
+      <div class="eng-theme-card">
+        <div class="eng-theme-img"><img src="haloween__2_.jpeg" alt="Halloween board" /><div class="eng-theme-badge">🎃 Halloween</div></div>
+        <div class="eng-theme-body">
+          <h3 class="eng-theme-title"><span data-lang="en">Halloween Party Food</span><span data-lang="ja">ハロウィン・パーティー料理</span></h3>
+          <p class="eng-theme-desc"><span data-lang="en">Build a spooky charcuterie board with cheese, cured meats, olives, and seasonal treats while learning party vocabulary.</span><span data-lang="ja">チーズ・生ハム・オリーブのパーティーボードを作りながら、英語のパーティー表現を楽しく学びます。</span></p>
+          <div class="eng-theme-vocab"><span class="vocab-chip">charcuterie</span><span class="vocab-chip">appetizer</span><span class="vocab-chip">Trick or treat!</span></div>
+        </div>
+      </div>
+      <div class="eng-theme-card">
+        <div class="eng-theme-img"><img src="haloween.jpeg" alt="Halloween dinner" /><div class="eng-theme-badge">🎃 Halloween Dinner</div></div>
+        <div class="eng-theme-body">
+          <h3 class="eng-theme-title"><span data-lang="en">Halloween Dinner Party</span><span data-lang="ja">ハロウィン・ディナー</span></h3>
+          <p class="eng-theme-desc"><span data-lang="en">An atmospheric dinner featuring Italian-inspired seafood pasta — perfect for practising dinner table conversation.</span><span data-lang="ja">イタリア風シーフードパスタのディナーパーティー。食卓での英会話フレーズを練習します。</span></p>
+          <div class="eng-theme-vocab"><span class="vocab-chip">seafood pasta</span><span class="vocab-chip">Could you pass…?</span><span class="vocab-chip">Cheers!</span></div>
+        </div>
+      </div>
+      <div class="eng-theme-card">
+        <div class="eng-theme-img"><img src="christmas2.jpeg" alt="Christmas feast" /><div class="eng-theme-badge">🎄 Christmas</div></div>
+        <div class="eng-theme-body">
+          <h3 class="eng-theme-title"><span data-lang="en">Christmas Feast</span><span data-lang="ja">クリスマス・フィースト</span></h3>
+          <p class="eng-theme-desc"><span data-lang="en">Roast a whole chicken with mashed potatoes, vegetables, and gravy. Learn how families celebrate Christmas worldwide.</span><span data-lang="ja">ホールチキンのロースト、マッシュポテト、グレービーソース。世界のクリスマス文化も英語で学びます。</span></p>
+          <div class="eng-theme-vocab"><span class="vocab-chip">roast chicken</span><span class="vocab-chip">gravy</span><span class="vocab-chip">Merry Christmas!</span></div>
+        </div>
+      </div>
+      <div class="eng-theme-card">
+        <div class="eng-theme-img"><img src="christmas.jpeg" alt="Christmas carving" /><div class="eng-theme-badge">🎅 Christmas Kitchen</div></div>
+        <div class="eng-theme-body">
+          <h3 class="eng-theme-title"><span data-lang="en">Christmas Kitchen Party</span><span data-lang="ja">クリスマス・キッチンパーティー</span></h3>
+          <p class="eng-theme-desc"><span data-lang="en">Carve the chicken together, set the table, and practise giving instructions and compliments in English.</span><span data-lang="ja">みんなでチキンをカービング！テーブルセッティングや、指示・褒め言葉の英語表現を練習します。</span></p>
+          <div class="eng-theme-vocab"><span class="vocab-chip">carve / slice</span><span class="vocab-chip">That smells amazing!</span><span class="vocab-chip">Shall I help?</span></div>
+        </div>
+      </div>
+      <div class="eng-theme-card">
+        <div class="eng-theme-img"><img src="spanish.jpeg" alt="Paella" /><div class="eng-theme-badge">🥘 Spanish</div></div>
+        <div class="eng-theme-body">
+          <h3 class="eng-theme-title"><span data-lang="en">Spanish Paella Night</span><span data-lang="ja">スパニッシュ・パエリアナイト</span></h3>
+          <p class="eng-theme-desc"><span data-lang="en">Cook a vibrant seafood paella — clams, shrimp, and scallops on golden saffron rice — and learn restaurant ordering in English.</span><span data-lang="ja">あさり・えび・ほたてのシーフードパエリア。食材の英単語やレストランでの注文フレーズも学べます。</span></p>
+          <div class="eng-theme-vocab"><span class="vocab-chip">paella</span><span class="vocab-chip">saffron rice</span><span class="vocab-chip">¡Buen provecho!</span></div>
+        </div>
+      </div>
+      <div class="eng-theme-card">
+        <div class="eng-theme-img"><img src="spanish2.jpeg" alt="Cooking class" /><div class="eng-theme-badge">🗣️ World Cuisine</div></div>
+        <div class="eng-theme-body">
+          <h3 class="eng-theme-title"><span data-lang="en">World Cuisine Conversation</span><span data-lang="ja">世界の料理×英会話</span></h3>
+          <p class="eng-theme-desc"><span data-lang="en">Explore cuisines beyond Japan while chatting about culture, travel, and ingredients. Every class is a mini world journey.</span><span data-lang="ja">世界各国の料理を作りながら、文化・旅・食材について英語でおしゃべり。毎回が小さな世界旅行です。</span></p>
+          <div class="eng-theme-vocab"><span class="vocab-chip">tapas</span><span class="vocab-chip">What's in this?</span><span class="vocab-chip">I love the flavour!</span></div>
+        </div>
+      </div>
+      <div class="eng-theme-card">
+        <div class="eng-theme-img"><img src="easter.jpeg" alt="Easter brunch" /><div class="eng-theme-badge">🐣 Easter</div></div>
+        <div class="eng-theme-body">
+          <h3 class="eng-theme-title"><span data-lang="en">Easter Brunch Party</span><span data-lang="ja">イースター・ブランチパーティー</span></h3>
+          <p class="eng-theme-desc"><span data-lang="en">Make deviled eggs, herb cocktails, and seasonal snacks while learning Easter traditions and how to make a toast in English!</span><span data-lang="ja">デビルドエッグやハーブカクテルを作りながら、イースターの文化と英語のトーストの仕方を学びます！</span></p>
+          <div class="eng-theme-vocab"><span class="vocab-chip">deviled eggs</span><span class="vocab-chip">Cheers! / Toast</span><span class="vocab-chip">Happy Easter!</span></div>
+        </div>
+      </div>
+      <div class="eng-theme-card">
+        <div class="eng-theme-img"><img src="easter2.jpeg" alt="Easter lamb" /><div class="eng-theme-badge">🌿 Easter Dinner</div></div>
+        <div class="eng-theme-body">
+          <h3 class="eng-theme-title"><span data-lang="en">Easter Roast Lamb</span><span data-lang="ja">イースター・ラムチョップ</span></h3>
+          <p class="eng-theme-desc"><span data-lang="en">Herb-crusted rack of lamb — a classic Easter centrepiece. Learn cooking terminology and how to describe dishes in English.</span><span data-lang="ja">ハーブクラストのラムラックはイースターの定番。料理用語や料理の説明フレーズを英語で練習します。</span></p>
+          <div class="eng-theme-vocab"><span class="vocab-chip">rack of lamb</span><span class="vocab-chip">herb crust</span><span class="vocab-chip">It's well done!</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="eng-how reveal">
+      <p class="section-label" style="text-align:center"><span data-lang="en">How It Works</span><span data-lang="ja">クラスの流れ</span></p>
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;text-align:center;color:var(--cream);margin-bottom:48px">
+        <span data-lang="en">Learn English, Cook the World</span>
+        <span data-lang="ja" style="font-family:'Noto Serif JP',serif;font-size:1.8rem;font-weight:300">料理しながら、英語を話す</span>
+      </h3>
+      <div class="eng-steps">
+        <div class="eng-step">
+          <div class="step-num">01</div><div class="step-icon">🍽️</div>
+          <div class="step-title"><span data-lang="en">Choose a Theme</span><span data-lang="ja" style="font-size:1rem;font-family:'Zen Kaku Gothic New',sans-serif">テーマを選ぶ</span></div>
+          <div class="step-body"><span data-lang="en">Pick a cuisine or seasonal theme — Christmas, Easter, Spanish, Mexican, and more.</span><span data-lang="ja">クリスマス・イースター・スパニッシュ・メキシカンなど、季節やお好みのテーマを選んでください。</span></div>
+        </div>
+        <div class="eng-step">
+          <div class="step-num">02</div><div class="step-icon">🗣️</div>
+          <div class="step-title"><span data-lang="en">Cook in English</span><span data-lang="ja" style="font-size:1rem;font-family:'Zen Kaku Gothic New',sans-serif">英語で料理する</span></div>
+          <div class="step-body"><span data-lang="en">We cook together in English. Terumi guides you through recipes and kitchen expressions at your own pace.</span><span data-lang="ja">テルミが英語でレシピ・食材・キッチン表現をていねいにガイド。自分のペースで進めます。</span></div>
+        </div>
+        <div class="eng-step">
+          <div class="step-num">03</div><div class="step-icon">🥂</div>
+          <div class="step-title"><span data-lang="en">Eat & Converse</span><span data-lang="ja" style="font-size:1rem;font-family:'Zen Kaku Gothic New',sans-serif">食べながら話す</span></div>
+          <div class="step-body"><span data-lang="en">Enjoy the meal together and keep the conversation going. Real food, real English — no pressure, all fun.</span><span data-lang="ja">完成した料理をみんなで楽しみながら英会話を続けます。プレッシャーなし、楽しさだけ！</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="eng-details reveal">
+      <div class="eng-detail-item"><div class="info-icon">🗾</div><div class="info-title"><span data-lang="en">For</span><span data-lang="ja">対象</span></div><div class="info-value"><span data-lang="en">Japanese speakers · Beginner–Intermediate</span><span data-lang="ja">日本語話者 / 英語初〜中級</span></div></div>
+      <div class="eng-detail-item"><div class="info-icon">👥</div><div class="info-title"><span data-lang="en">Group Size</span><span data-lang="ja">定員</span></div><div class="info-value"><span data-lang="en">2–6 guests</span><span data-lang="ja">2〜6名</span></div></div>
+      <div class="eng-detail-item"><div class="info-icon">⏱️</div><div class="info-title"><span data-lang="en">Duration</span><span data-lang="ja">時間</span></div><div class="info-value"><span data-lang="en">3–4 hours</span><span data-lang="ja">約3〜4時間</span></div></div>
+      <div class="eng-detail-item"><div class="info-icon">📍</div><div class="info-title"><span data-lang="en">Location</span><span data-lang="ja">場所</span></div><div class="info-value"><span data-lang="en">Osaka (details after booking)</span><span data-lang="ja">大阪（詳細は予約後）</span></div></div>
+      <div class="eng-detail-item"><div class="info-icon">🌐</div><div class="info-title"><span data-lang="en">Language</span><span data-lang="ja">言語</span></div><div class="info-value"><span data-lang="en">English + Japanese support</span><span data-lang="ja">英語＋日本語サポート</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TOURS & GUIDE -->
+<section id="tours">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label"><span data-lang="en">Explore Japan with a Local</span><span data-lang="ja">地元ガイドと巡る日本</span></p>
+      <h2 class="section-title" data-lang-block="en">Tours, Guiding &<br><em>Interpretation</em></h2>
+      <h2 class="section-title section-title-ja" data-lang-block="ja">ツアー・ガイド・<em>通訳</em>サービス</h2>
+      <p class="section-lead" data-lang-block="en">Beyond the kitchen, I offer personalized tour guiding and professional interpretation services. Whether you're exploring Osaka's ancient streets, navigating a business meeting, or seeking a genuine local perspective — I'm here to help.</p>
+      <p class="section-lead" data-lang-block="ja">キッチンの外でも、個人ガイドと通訳サービスを提供しています。大阪の路地裏散歩、ビジネス通訳、観光ガイドなど、地元ならではの視点で日本をご案内します。</p>
+    </div>
+    <div class="tour-grid reveal">
+      <div class="tour-card">
+        <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80" alt="Osaka food tour" />
+        <div class="tour-overlay">
+          <div class="tour-num">01</div>
+          <div class="tour-title"><span data-lang="en">Osaka Food & Market Tour</span><span data-lang="ja">大阪フード＆マーケットツアー</span></div>
+          <div class="tour-body"><span data-lang="en">Explore Kuromon Market and Dotonbori's hidden gems with a local who knows every stall.</span><span data-lang="ja">黒門市場や道頓堀の隠れスポットを、地元のテルミがご案内。地元民しか知らない名店もご紹介します。</span></div>
+        </div>
+      </div>
+      <div class="tour-card">
+        <img src="https://images.unsplash.com/photo-1551641506-ee5bf4cb45f1?w=800&q=80" alt="Kyoto tour" />
+        <div class="tour-overlay">
+          <div class="tour-num">02</div>
+          <div class="tour-title"><span data-lang="en">Kyoto Cultural Day Trip</span><span data-lang="ja">京都文化日帰りツアー</span></div>
+          <div class="tour-body"><span data-lang="en">From Fushimi Inari to Nishiki Market — guided in English with rich historical commentary.</span><span data-lang="ja">伏見稲荷から錦市場まで。英語・日本語で歴史と文化を詳しく解説します。</span></div>
+        </div>
+      </div>
+      <div class="tour-card">
+        <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=800&q=80" alt="Izakaya night" />
+        <div class="tour-overlay">
+          <div class="tour-num">03</div>
+          <div class="tour-title"><span data-lang="en">Izakaya Night Crawl</span><span data-lang="ja">居酒屋ナイトクロール</span></div>
+          <div class="tour-body"><span data-lang="en">An evening of small plates and local sake, navigating Osaka's izakaya scene.</span><span data-lang="ja">小皿料理と地酒を楽しみながら大阪の居酒屋を巡る、特別な夜のツアー。</span></div>
+        </div>
+      </div>
+      <div class="tour-card">
+        <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=80" alt="Custom tour" />
+        <div class="tour-overlay">
+          <div class="tour-num">04</div>
+          <div class="tour-title"><span data-lang="en">Custom Private Tour</span><span data-lang="ja">プライベート・カスタムツアー</span></div>
+          <div class="tour-body"><span data-lang="en">Tailor-made itineraries for families, couples, and small groups. You set the pace.</span><span data-lang="ja">ご家族・カップル・少人数グループ向けのオーダーメイドツアー。ペースはお客様次第です。</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="service-row reveal">
+      <div class="service-item">
+        <div class="service-icon">🗣️</div>
+        <div class="service-title"><span data-lang="en">Interpretation Services</span><span data-lang="ja">通訳サービス</span></div>
+        <div class="service-body"><span data-lang="en">Professional Japanese–English interpretation for business meetings, conferences, medical appointments, and cultural events. Fluent, reliable, and culturally nuanced.</span><span data-lang="ja">ビジネス会議・学会・医療機関・文化イベントでの日英通訳。流暢で文化的ニュアンスを大切にした通訳をご提供します。</span></div>
+        <div class="languages-badge"><span class="lang-pill">Japanese</span><span class="lang-pill">English</span></div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">🗺️</div>
+        <div class="service-title"><span data-lang="en">Licensed Tour Guide</span><span data-lang="ja">認定ツアーガイド</span></div>
+        <div class="service-body"><span data-lang="en">Certified and experienced in guiding visitors through Osaka, Kyoto, and Nara. I bring destinations to life with stories, context, and genuine local insight.</span><span data-lang="ja">大阪・京都・奈良を英語でご案内。現地の物語や背景を交えた、地元ならではのガイドです。</span></div>
+        <div class="languages-badge"><span class="lang-pill"><span data-lang="en">Private</span><span data-lang="ja">個人</span></span><span class="lang-pill"><span data-lang="en">Small groups</span><span data-lang="ja">小グループ</span></span></div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">✍️</div>
+        <div class="service-title"><span data-lang="en">Translation Support</span><span data-lang="ja">翻訳サポート</span></div>
+        <div class="service-body"><span data-lang="en">Need help with menus, signs, documents, or correspondence? I offer written translation and on-the-spot assistance for travelers and businesses alike.</span><span data-lang="ja">メニュー・看板・書類・メールの翻訳もお任せください。旅行者の方にも企業様にも対応しています。</span></div>
+        <div class="languages-badge"><span class="lang-pill"><span data-lang="en">Documents</span><span data-lang="ja">文書翻訳</span></span><span class="lang-pill"><span data-lang="en">On-site</span><span data-lang="ja">現地対応</span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="experience">
+  <div class="container">
+    <div class="experience-layout">
+      <div class="reveal">
+        <p class="section-label"><span data-lang="en">Guest Stories</span><span data-lang="ja">お客様の声</span></p>
+        <h2 class="section-title" data-lang-block="en">What Guests<br><em>Are Saying</em></h2>
+        <h2 class="section-title section-title-ja" data-lang-block="ja">参加者の<em>声</em></h2>
+        <div class="quote-block">
+          <blockquote data-lang-block="en">"Terumi's class was the highlight of our entire trip to Japan. We laughed, cooked, and ate — and learned more about Japanese culture in four hours than in a week of sightseeing."</blockquote>
+          <blockquote data-lang-block="ja" style="font-family:'Noto Serif JP',serif;font-size:1.3rem;font-weight:300">「テルミさんのクラスは、日本旅行で最高の思い出になりました。笑って、料理して、食べて——4時間で1週間の観光より多くの日本文化を学べました。」</blockquote>
+          <span class="quote-attr">— Sarah M., New York</span>
+        </div>
+        <a href="#contact" class="btn-primary" style="margin-top:8px"><span data-lang="en">Book Your Experience</span><span data-lang="ja">体験を予約する</span></a>
+      </div>
+      <div class="testimonial-grid reveal">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p data-lang-block="en">"The sushi class was incredible. Terumi explained everything so clearly and was so warm and patient. We made 4 types of sushi and ate every single one!"</p>
+          <p data-lang-block="ja">「寿司クラスは最高でした！テルミさんの説明はわかりやすく、とても温かく丁寧。4種類の寿司を作って全部食べちゃいました！」</p>
+          <div class="testimonial-name">— James & Lily, Australia</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p data-lang-block="en">"Hired Terumi as our guide and interpreter for a 3-day Osaka–Kyoto trip. Her knowledge was exceptional and her English was flawless. Highly recommend!"</p>
+          <p data-lang-block="ja">「大阪・京都3日間のガイド通訳をお願いしました。知識が豊富で英語も完璧。心からおすすめします！」</p>
+          <div class="testimonial-name">— David K., Canada</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p data-lang-block="en">"The market tour was so much fun. We tried things we'd never have found on our own. Terumi made us feel like locals for a day."</p>
+          <p data-lang-block="ja">「市場ツアーがとても楽しかった！自分たちでは絶対見つけられないものを試食できました。地元民になった気分でした。」</p>
+          <div class="testimonial-name">— Elena R., Italy</div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p data-lang-block="en">"Best experience in Japan! We did the ramen class — the broth was unbelievable. Terumi is a gifted teacher and truly passionate about food."</p>
+          <p data-lang-block="ja">「日本で一番の体験！ラーメンクラスのスープが忘れられません。テルミさんは食への情熱にあふれた素晴らしい先生です。」</p>
+          <div class="testimonial-name">— Tom & Amy, UK</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:40px" class="reveal">
+      <p class="section-label" style="text-align:center"><span data-lang="en">Follow the Journey</span><span data-lang="ja">日々の記録</span></p>
+      <h2 class="section-title" style="text-align:center">
+        <span data-lang="en">From the <em>Kitchen</em> & Beyond</span>
+        <span data-lang="ja" style="font-family:'Noto Serif JP',serif;font-size:2.2rem;font-weight:300"><em>キッチン</em>と旅の記録</span>
+      </h2>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-top:8px">📸 <a href="https://www.instagram.com/terumieats/" target="_blank" style="color:var(--miso);text-decoration:none">@terumieats</a> <span data-lang="en">on Instagram</span><span data-lang="ja">をフォロー</span></p>
+    </div>
+    <div class="ig-grid reveal">
+      <div class="ig-item"><img src="https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&q=80" alt="Sushi"/><div class="ig-item-overlay"><span>🍣</span></div></div>
+      <div class="ig-item"><img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80" alt="Cooking"/><div class="ig-item-overlay"><span>🍜</span></div></div>
+      <div class="ig-item"><img src="https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=400&q=80" alt="Miso"/><div class="ig-item-overlay"><span>🥢</span></div></div>
+      <div class="ig-item"><img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=400&q=80" alt="Osaka"/><div class="ig-item-overlay"><span>🏙️</span></div></div>
+      <div class="ig-item"><img src="https://images.unsplash.com/photo-1574484284002-952d92456975?w=400&q=80" alt="Wagyu"/><div class="ig-item-overlay"><span>🥩</span></div></div>
+      <div class="ig-item"><img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&q=80" alt="Ramen"/><div class="ig-item-overlay"><span>🍜</span></div></div>
+      <div class="ig-item"><img src="https://images.unsplash.com/photo-1498654077810-12c21d4d6dc3?w=400&q=80" alt="Bento"/><div class="ig-item-overlay"><span>🍱</span></div></div>
+      <div class="ig-item"><img src="https://images.unsplash.com/photo-1551641506-ee5bf4cb45f1?w=400&q=80" alt="Temple"/><div class="ig-item-overlay"><span>⛩️</span></div></div>
+      <div class="ig-item"><img src="https://images.unsplash.com/photo-1607301406259-dfb186e15de8?w=400&q=80" alt="Class"/><div class="ig-item-overlay"><span>👩‍🍳</span></div></div>
+      <div class="ig-item"><img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=400&q=80" alt="Night"/><div class="ig-item-overlay"><span>🌃</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-layout">
+      <div class="reveal contact-info">
+        <p class="section-label"><span data-lang="en">Get in Touch</span><span data-lang="ja">お問い合わせ</span></p>
+        <h2 class="section-title" data-lang-block="en">Book Your<br><em>Experience</em></h2>
+        <h2 class="section-title section-title-ja" data-lang-block="ja"><em>体験</em>を<br>予約する</h2>
+        <p data-lang-block="en">Whether you'd like to join a cooking class, arrange a private tour, or hire me as your interpreter, I'd love to hear from you. Classes fill up quickly — especially in spring and autumn — so please reach out early!</p>
+        <p data-lang-block="ja">料理教室・プライベートツアー・通訳のご依頼など、お気軽にお問い合わせください。春と秋はすぐに満席になりますので、お早めにどうぞ！</p>
+        <div class="contact-item">
+          <span class="contact-icon">📍</span>
+          <div class="contact-detail">
+            <strong><span data-lang="en">Location</span><span data-lang="ja">場所</span></strong>
+            <span data-lang="en">Osaka, Japan (Exact address shared upon booking)</span>
+            <span data-lang="ja">大阪（詳細は予約確定後にお伝えします）</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">📸</span>
+          <div class="contact-detail">
+            <strong>Instagram</strong>
+            <a href="https://www.instagram.com/terumieats/" target="_blank" style="color:var(--miso-light)">@terumieats</a>
+          </div>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">🌐</span>
+          <div class="contact-detail">
+            <strong><span data-lang="en">Languages</span><span data-lang="ja">対応言語</span></strong>
+            <span data-lang="en">English & Japanese</span><span data-lang="ja">英語・日本語</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <span class="contact-icon">📅</span>
+          <div class="contact-detail">
+            <strong><span data-lang="en">Availability</span><span data-lang="ja">受付</span></strong>
+            <span data-lang="en">Year-round · Please book 1–2 weeks in advance</span>
+            <span data-lang="ja">通年受付中 · 1〜2週間前までにご予約ください</span>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <form class="contact-form" onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label><span data-lang="en">First Name</span><span data-lang="ja">名</span></label>
+              <input type="text" id="ph-fn" placeholder="Jane" required />
+            </div>
+            <div class="form-group">
+              <label><span data-lang="en">Last Name</span><span data-lang="ja">姓</span></label>
+              <input type="text" id="ph-ln" placeholder="Smith" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label><span data-lang="en">Email Address</span><span data-lang="ja">メールアドレス</span></label>
+            <input type="email" placeholder="jane@example.com" required />
+          </div>
+          <div class="form-group">
+            <label><span data-lang="en">Service Interested In</span><span data-lang="ja">ご希望のサービス</span></label>
+            <select id="svc">
+              <option data-en="Select a service…" data-ja="サービスを選んでください…">Select a service…</option>
+              <option data-en="Cooking Class – Sushi & Sashimi" data-ja="料理教室 – 寿司・刺身">Cooking Class – Sushi &amp; Sashimi</option>
+              <option data-en="Cooking Class – Ramen from Scratch" data-ja="料理教室 – ラーメン">Cooking Class – Ramen from Scratch</option>
+              <option data-en="Cooking Class – Osaka Classics" data-ja="料理教室 – 大阪の定番料理">Cooking Class – Osaka Classics</option>
+              <option data-en="English × Cooking – Seasonal Theme" data-ja="英会話×料理教室 – 季節テーマ">English × Cooking – Seasonal Theme</option>
+              <option data-en="Food & Market Tour" data-ja="フード＆マーケットツアー">Food &amp; Market Tour</option>
+              <option data-en="Kyoto Cultural Day Trip" data-ja="京都文化日帰りツアー">Kyoto Cultural Day Trip</option>
+              <option data-en="Izakaya Night Crawl" data-ja="居酒屋ナイトクロール">Izakaya Night Crawl</option>
+              <option data-en="Custom Private Tour" data-ja="プライベートカスタムツアー">Custom Private Tour</option>
+              <option data-en="Interpretation Service" data-ja="通訳サービス">Interpretation Service</option>
+              <option data-en="Translation Support" data-ja="翻訳サポート">Translation Support</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label><span data-lang="en">Preferred Date</span><span data-lang="ja">ご希望の日程</span></label>
+              <input type="date" />
+            </div>
+            <div class="form-group">
+              <label><span data-lang="en">Number of Guests</span><span data-lang="ja">参加人数</span></label>
+              <input type="number" placeholder="2" min="1" max="12" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label><span data-lang="en">Message</span><span data-lang="ja">メッセージ・ご質問</span></label>
+            <textarea id="ph-msg" placeholder="Any dietary requirements, questions, or special requests…"></textarea>
+          </div>
+          <button type="submit" class="btn-form" id="submit-btn">
+            <span data-lang="en">Send Inquiry →</span><span data-lang="ja">送信する →</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <a href="#" class="nav-logo">Terumi<span>Eats</span></a>
+      <p class="footer-tagline">
+        <span data-lang-block="en">Authentic Japanese cooking classes, personalized tours, and professional interpretation services in Osaka, Japan.</span>
+        <span data-lang-block="ja">大阪を拠点に、本格的な日本料理教室・英会話×料理クラス・ツアーガイド・通訳サービスを提供しています。</span>
+      </p>
+    </div>
+    <div class="footer-col">
+      <h4><span data-lang="en">Classes</span><span data-lang="ja">料理教室</span></h4>
+      <ul>
+        <li><a href="#cooking"><span data-lang="en">Sushi Workshop</span><span data-lang="ja">寿司ワークショップ</span></a></li>
+        <li><a href="#cooking"><span data-lang="en">Ramen Class</span><span data-lang="ja">ラーメンクラス</span></a></li>
+        <li><a href="#cooking"><span data-lang="en">Osaka Classics</span><span data-lang="ja">大阪定番料理</span></a></li>
+        <li><a href="#english"><span data-lang="en">English × Cooking</span><span data-lang="ja">英会話×料理</span></a></li>
+        <li><a href="#english"><span data-lang="en">Seasonal World Cuisine</span><span data-lang="ja">季節の世界料理</span></a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4><span data-lang="en">Tours & Services</span><span data-lang="ja">ツアー・サービス</span></h4>
+      <ul>
+        <li><a href="#tours"><span data-lang="en">Food Tours</span><span data-lang="ja">フードツアー</span></a></li>
+        <li><a href="#tours"><span data-lang="en">Kyoto Day Trip</span><span data-lang="ja">京都日帰り</span></a></li>
+        <li><a href="#tours"><span data-lang="en">Izakaya Night</span><span data-lang="ja">居酒屋ナイト</span></a></li>
+        <li><a href="#tours"><span data-lang="en">Interpretation</span><span data-lang="ja">通訳</span></a></li>
+        <li><a href="#tours"><span data-lang="en">Translation</span><span data-lang="ja">翻訳</span></a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4><span data-lang="en">Connect</span><span data-lang="ja">つながる</span></h4>
+      <ul>
+        <li><a href="https://www.instagram.com/terumieats/" target="_blank">Instagram @terumieats</a></li>
+        <li><a href="#contact"><span data-lang="en">Contact & Booking</span><span data-lang="ja">お問い合わせ・予約</span></a></li>
+        <li><a href="#about"><span data-lang="en">About Terumi</span><span data-lang="ja">私について</span></a></li>
+        <li><a href="#experience"><span data-lang="en">Guest Reviews</span><span data-lang="ja">お客様の声</span></a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 TerumiEats. <span data-lang="en">All rights reserved.</span><span data-lang="ja">無断転載禁止。</span> · Osaka, Japan</p>
+    <div class="social-links"><a href="https://www.instagram.com/terumieats/" target="_blank">Instagram</a></div>
+  </div>
+</footer>
+
+<script>
+  /* ── LANGUAGE SWITCHER ── */
+  function setLang(lang) {
+    document.body.className = 'lang-' + lang;
+    document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+    document.getElementById('btnJA').classList.toggle('active', lang === 'ja');
+    document.documentElement.lang = lang === 'ja' ? 'ja' : 'en';
+    document.title = lang === 'ja'
+      ? 'テルミイーツ – 料理教室・英会話×料理・ツアー・通訳 in 大阪'
+      : 'Terumi Eats – Cooking Classes, Tours & Interpretation in Japan';
+    // Update select options
+    Array.from(document.getElementById('svc').options).forEach(o => {
+      const t = o.getAttribute('data-' + lang); if (t) o.textContent = t;
+    });
+    // Update placeholders
+    const fn = document.getElementById('ph-fn');
+    const ln = document.getElementById('ph-ln');
+    const msg = document.getElementById('ph-msg');
+    if (fn) fn.placeholder = lang === 'ja' ? '例：花子' : 'Jane';
+    if (ln) ln.placeholder = lang === 'ja' ? '例：山田' : 'Smith';
+    if (msg) msg.placeholder = lang === 'ja'
+      ? 'アレルギー情報・ご質問・特別なご要望などをご記入ください…'
+      : 'Any dietary requirements, questions, or special requests…';
+    try { localStorage.setItem('terumi-lang', lang); } catch(e) {}
+  }
+
+  // Restore preference
+  try { const s = localStorage.getItem('terumi-lang'); if (s === 'ja') setLang('ja'); } catch(e) {}
+
+  /* ── NAVBAR SCROLL ── */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 60));
+
+  /* ── SCROLL REVEAL ── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 80); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  /* ── FORM ── */
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    const ja = document.body.classList.contains('lang-ja');
+    btn.innerHTML = ja ? '✓ 送信しました！' : '✓ Inquiry Sent!';
+    btn.style.background = '#5a7a5e';
+    setTimeout(() => {
+      btn.innerHTML = ja
+        ? '<span data-lang="ja">送信する →</span>'
+        : '<span data-lang="en">Send Inquiry →</span>';
+      btn.style.background = '';
+      setLang(ja ? 'ja' : 'en'); // re-apply to show correct span
+      e.target.reset();
+    }, 3000);
+  }
+</script>
+</body>
+</html>
